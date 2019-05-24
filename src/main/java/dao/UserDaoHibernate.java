@@ -1,6 +1,7 @@
 package dao;
 
 import model.User;
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -11,8 +12,10 @@ import java.util.List;
 
 public class UserDaoHibernate {
 
+    Logger logger = Logger.getLogger(UserDaoHibernate.class);
 
     public List<User> findAll(){
+        logger.debug("Find all users");
         List<User> users = HibernateSessionFactoryUtil
                 .getSessionFactory().openSession()
                 .createQuery("FROM User").list();
@@ -20,11 +23,13 @@ public class UserDaoHibernate {
     }
 
     public User findById(String id){
+        logger.debug("Find user by id");
         return HibernateSessionFactoryUtil.getSessionFactory().openSession().get(User.class, id);
     }
 
     public boolean save(User user){
         try {
+            logger.debug("Save user");
             Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
             Transaction tx1 = session.beginTransaction();
             session.save(user);
@@ -32,12 +37,14 @@ public class UserDaoHibernate {
             session.close();
             return true;
         }catch (HibernateException e){
+            logger.warn("Exception", e);
             return false;
         }
     }
 
     public boolean update(User user, String id){
         try {
+            logger.debug("Update user");
             String hql = "UPDATE User SET login = :login, email = :email, roleId = :roleId WHERE id = :id";
             Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
             Transaction txl = session.beginTransaction();
@@ -50,13 +57,15 @@ public class UserDaoHibernate {
             txl.commit();
             session.close();
             return true;
-        }catch (Exception e){
+        }catch (HibernateException e){
+            logger.warn("Exception", e);
             return false;
         }
     }
 
     public boolean delete(User user) {
         try {
+            logger.debug("Delete user");
             Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
             Transaction tx1 = session.beginTransaction();
             session.delete(user);
@@ -64,6 +73,7 @@ public class UserDaoHibernate {
             session.close();
             return true;
         }catch (HibernateException e){
+            logger.warn("Exception", e);
             return false;
         }
     }
