@@ -1,6 +1,7 @@
 package servlet.Seller;
 
 import dao.GoodDao;
+import dao.GoodDaoHibernate;
 import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
@@ -13,12 +14,12 @@ import java.io.IOException;
 
 @WebServlet(name = "SellerDeleteServlet", value = "/seller/delete")
 public class SellerDeleteServlet extends HttpServlet {
-    private GoodDao goodDao;
+    private GoodDaoHibernate goodDao;
     private static final Logger logger = Logger.getLogger(SellerDeleteServlet.class);
 
     @Override
     public void init() throws ServletException {
-        goodDao = new GoodDao();
+        goodDao = new GoodDaoHibernate();
         super.init();
     }
 
@@ -29,7 +30,7 @@ public class SellerDeleteServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
         logger.debug("Deleting good by Id");
-        goodDao.deleteGoodsById(id);
+        goodDao.delete(goodDao.findById(id));
         logger.info("Forward to /seller/home");
         RequestDispatcher dispatcher = request.getRequestDispatcher("/seller/home");
         dispatcher.forward(request, response);

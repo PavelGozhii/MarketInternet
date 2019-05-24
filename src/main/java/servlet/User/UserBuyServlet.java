@@ -1,7 +1,9 @@
 package servlet.User;
 
 import dao.GoodDao;
+import dao.GoodDaoHibernate;
 import dao.UserDao;
+import dao.UserDaoHibernate;
 import model.Good;
 import model.User;
 import org.apache.log4j.Logger;
@@ -18,14 +20,14 @@ import java.io.IOException;
 
 @WebServlet(name = "UserBuyServlet", value = "/user/buy")
 public class UserBuyServlet extends HttpServlet {
-    private GoodDao goodDao;
-    private UserDao userDao;
+    private GoodDaoHibernate goodDao;
+    private UserDaoHibernate userDao;
     private static final Logger logger = Logger.getLogger(UserBuyServlet.class);
 
     @Override
     public void init() throws ServletException {
-        userDao = new UserDao();
-        goodDao = new GoodDao();
+        userDao = new UserDaoHibernate();
+        goodDao = new GoodDaoHibernate();
         super.init();
     }
 
@@ -52,13 +54,13 @@ public class UserBuyServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
-        User user = userDao.selectUser((String) request.getSession().getAttribute("login"));
+        User user = userDao.findById((String) request.getSession().getAttribute("login"));
         String email = user.getEmail();
         int code = CodeGenerator.generateCode();
         String codeString = String.valueOf(code);
         request.getSession().setAttribute("code", codeString);
         EmailSender.sendMessage(email, "Your code: " + code);
-        Good good = goodDao.selectGood(id);
+        Good good = goodDao.findById(id);
         request.setAttribute("good", good);
         logger.info("Forward to BuyPage.jsp");
         RequestDispatcher dispatcher = request.getRequestDispatcher("BuyPage.jsp");

@@ -1,10 +1,30 @@
 package model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "users")
 public class User {
+
+    @Column(name = "login")
+    @Id
     private String login;
+
+    @Column(name = "email")
     private String email;
+
+    @Column(name = "roleId")
     private String roleId;
+
+    @Column(name = "password")
     private String hashPassword;
+
+    public User(){
+
+    }
 
     public User(String login, String hashPassword, String email, String roleId) {
         this.login = login;

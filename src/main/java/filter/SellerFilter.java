@@ -1,6 +1,7 @@
 package filter;
 
 import dao.UserDao;
+import dao.UserDaoHibernate;
 import org.apache.log4j.Logger;
 
 import javax.servlet.Filter;
@@ -16,11 +17,11 @@ import java.io.IOException;
 @WebFilter("/seller/*")
 public class SellerFilter implements Filter {
     private static final Logger logger = Logger.getLogger(AdminFilter.class);
-    private UserDao userDao;
+    private UserDaoHibernate userDao;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        userDao = new UserDao();
+        userDao = new UserDaoHibernate();
     }
 
     @Override

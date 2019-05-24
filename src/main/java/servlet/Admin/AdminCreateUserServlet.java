@@ -1,6 +1,7 @@
 package servlet.Admin;
 
 import dao.UserDao;
+import dao.UserDaoHibernate;
 import model.User;
 import org.apache.log4j.Logger;
 import service.CodeGenerator;
@@ -15,12 +16,12 @@ import java.io.IOException;
 
 @WebServlet(value = "/admin/create", name = "AdminCreate")
 public class AdminCreateUserServlet extends HttpServlet {
-    private UserDao userDao;
+    private UserDaoHibernate userDao;
     private Logger logger = Logger.getLogger(AdminCreateUserServlet.class);
 
     @Override
     public void init() throws ServletException {
-        userDao = new UserDao();
+        userDao = new UserDaoHibernate();
         super.init();
     }
 
@@ -31,7 +32,7 @@ public class AdminCreateUserServlet extends HttpServlet {
         String roleId = request.getParameter("roleId");
         User user = new User(login, CodeGenerator.getSHA512SecurePsssword(password), email, roleId);
         logger.debug("Creating user" + login + " with role " + roleId);
-        if (userDao.insertUser(user)) {
+        if (userDao.save(user)) {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/admin/home");
             logger.info("Forward to /admin/home");
             dispatcher.forward(request, response);

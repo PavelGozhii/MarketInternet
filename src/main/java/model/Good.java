@@ -1,11 +1,34 @@
 package model;
 
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.Random;
+
+
+@Entity
+@Table(name = "goods")
 public class Good {
+
+    @Id
+    @Column(name = "id")
     private String id;
+
+    @Column(name = "owner")
     private String owner;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "price")
     private double price;
+
+    @Column(name = "description")
     private String description;
+
+    public Good(){}
 
     public Good(String id, String owner, String name, String description, double price) {
         this.id = id;

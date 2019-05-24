@@ -1,7 +1,9 @@
 package servlet.User;
 
 import dao.GoodDao;
+import dao.GoodDaoHibernate;
 import dao.UserDao;
+import dao.UserDaoHibernate;
 import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
@@ -14,14 +16,14 @@ import java.io.IOException;
 
 @WebServlet(value = "/user/home", name = "UserHome")
 public class UserHomeServlet extends HttpServlet {
-    private UserDao userDao;
-    private GoodDao goodDao;
+    private UserDaoHibernate userDao;
+    private GoodDaoHibernate goodDao;
     private static final Logger logger = Logger.getLogger(UserHomeServlet.class);
 
     @Override
     public void init() throws ServletException {
-        userDao = new UserDao();
-        goodDao = new GoodDao();
+        userDao = new UserDaoHibernate();
+        goodDao = new GoodDaoHibernate();
         super.init();
     }
 
@@ -30,7 +32,7 @@ public class UserHomeServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("goodsList", goodDao.selectAllGoods());
+        request.setAttribute("goodsList", goodDao.findAll());
         request.setAttribute("login", request.getSession().getAttribute("login"));
         RequestDispatcher dispatcher = request.getRequestDispatcher("UserPage.jsp");
         logger.info("Forward to UserPage.jsp");

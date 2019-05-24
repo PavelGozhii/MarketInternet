@@ -1,6 +1,7 @@
 package servlet.Seller;
 
 import dao.GoodDao;
+import dao.GoodDaoHibernate;
 import model.Good;
 import org.apache.log4j.Logger;
 
@@ -14,12 +15,12 @@ import java.io.IOException;
 
 @WebServlet(name = "SellerEditServlet", value = "/seller/edit")
 public class SellerEditServlet extends HttpServlet {
-    private GoodDao goodDao;
+    private GoodDaoHibernate goodDao;
     private static final Logger logger = Logger.getLogger(SellerEditServlet.class);
 
     @Override
     public void init() throws ServletException {
-        goodDao = new GoodDao();
+        goodDao = new GoodDaoHibernate();
         super.init();
     }
 
@@ -31,7 +32,7 @@ public class SellerEditServlet extends HttpServlet {
         String id = request.getParameter("id");
         Good good = new Good(id, owner, name, description, price);
         logger.debug("Updating good");
-        if (goodDao.updateGood(good, id)) {
+        if (goodDao.update(good, id)) {
             logger.info("Forward to /seller/home");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/seller/home");
             dispatcher.forward(request, response);
@@ -46,7 +47,7 @@ public class SellerEditServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("good", goodDao.selectGood(request.getParameter("id")));
+        request.setAttribute("good", goodDao.findById(request.getParameter("id")));
         logger.info("Forward to GoodForm.jsp");
         RequestDispatcher dispatcher = request.getRequestDispatcher("GoodForm.jsp");
         dispatcher.forward(request, response);
