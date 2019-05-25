@@ -2,16 +2,20 @@ package service;
 
 import model.Good;
 import model.User;
+import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
 public class HibernateSessionFactoryUtil {
     private static SessionFactory sessionFactory;
+    private static final Logger logger = Logger.getLogger(HibernateSessionFactoryUtil.class);
 
-    private HibernateSessionFactoryUtil() {}
+    private HibernateSessionFactoryUtil() {
+    }
 
     public static SessionFactory getSessionFactory() {
+        logger.debug("Getting session factory");
         if (sessionFactory == null) {
             try {
                 Configuration configuration = new Configuration().configure();
@@ -19,9 +23,8 @@ public class HibernateSessionFactoryUtil {
                 configuration.addAnnotatedClass(Good.class);
                 StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                 sessionFactory = configuration.buildSessionFactory(builder.build());
-
             } catch (Exception e) {
-                System.out.println("Исключение!" + e);
+                logger.error("Exception", e);
             }
         }
         return sessionFactory;

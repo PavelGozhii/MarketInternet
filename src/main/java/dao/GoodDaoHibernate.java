@@ -1,7 +1,6 @@
 package dao;
 
 import model.Good;
-import model.User;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -18,37 +17,40 @@ public class GoodDaoHibernate {
 
     public List<Good> findAll() {
         logger.debug("Find all goods");
-        List goods = HibernateSessionFactoryUtil.getSessionFactory().openSession().createQuery("FROM Good").list();
+        List goods = HibernateSessionFactoryUtil
+                .getSessionFactory()
+                .openSession()
+                .createQuery("FROM Good").list();
         return goods;
     }
 
-    public List<Good> findByOwner(String owner){
+    public List<Good> findByOwner(String owner) {
+        String hq1 = "FROM Good WHERE owner = :owner";
         List<Good> goods = new ArrayList<>();
-        try{
+        try (Session session = HibernateSessionFactoryUtil
+                .getSessionFactory()
+                .openSession()) {
             logger.debug("Find by owner");
-            String hq1 = "FROM Good WHERE owner = :owner";
-            Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-            Transaction transaction = session.beginTransaction();
             Query query = session.createQuery(hq1);
             query.setParameter("owner", owner);
             goods = query.getResultList();
             return goods;
-        }catch (HibernateException e) {
+        } catch (HibernateException e) {
             logger.warn("Exception", e);
             return goods;
         }
     }
 
     public boolean saveGood(Good good) {
-        try {
+        try (Session session = HibernateSessionFactoryUtil
+                .getSessionFactory()
+                .openSession()) {
             logger.debug("Save good");
-            Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
             Transaction txl = session.beginTransaction();
             session.save(good);
             txl.commit();
-            session.close();
             return true;
-        }catch (HibernateException e){
+        } catch (HibernateException e) {
             logger.warn("Exception", e);
             return false;
         }
@@ -56,14 +58,18 @@ public class GoodDaoHibernate {
 
     public Good findById(String id) {
         logger.debug("Find food by Id");
-        return HibernateSessionFactoryUtil.getSessionFactory().openSession().get(Good.class, id);
+        return HibernateSessionFactoryUtil
+                .getSessionFactory()
+                .openSession()
+                .get(Good.class, id);
     }
 
-    public boolean update(Good good, String id){
-        try {
+    public boolean update(Good good, String id) {
+        String hq1 = "UPDATE Good SET id = :newId, owner = :owner, name = :name, price = :price, description = :description WHERE id = :id";
+        try (Session session = HibernateSessionFactoryUtil
+                .getSessionFactory()
+                .openSession()) {
             logger.debug("Update good");
-            String hq1 = "UPDATE Good SET id = :newId, owner = :owner, name = :name, price = :price, description = :description WHERE id = :id";
-            Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
             Transaction txl = session.beginTransaction();
             Query query = session.createQuery(hq1);
             query.setParameter("newId", good.getId());
@@ -76,13 +82,13 @@ public class GoodDaoHibernate {
             txl.commit();
             session.close();
             return true;
-        }catch (HibernateException e){
+        } catch (HibernateException e) {
             logger.warn("Exception", e);
             return false;
         }
     }
 
-    public boolean delete(Good good){
+    public boolean delete(Good good) {
         try {
             logger.debug("Delete good");
             Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
@@ -91,17 +97,18 @@ public class GoodDaoHibernate {
             txl.commit();
             session.close();
             return true;
-        }catch (HibernateException e){
-            logger.warn("Exceprion, e");
+        } catch (HibernateException e) {
+            logger.warn("Exception, e");
             return false;
         }
     }
 
-    public boolean deleteByOwner(String owner){
-        try {
+    public boolean deleteByOwner(String owner) {
+        String hq1 = "DELETE FROM Good G WHERE G.owner = :owner";
+        try (Session session = HibernateSessionFactoryUtil
+                .getSessionFactory()
+                .openSession()) {
             logger.debug("Delete by Owner");
-            String hq1 = "DELETE FROM Good G WHERE G.owner = :owner";
-            Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
             Transaction txl = session.beginTransaction();
             Query query = session.createQuery(hq1);
             query.setParameter("owner", owner);
@@ -112,7 +119,7 @@ public class GoodDaoHibernate {
             txl.commit();
             session.close();
             return true;
-        }catch (HibernateException e){
+        } catch (HibernateException e) {
             logger.warn("Exception", e);
             return false;
         }

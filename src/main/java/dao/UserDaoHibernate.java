@@ -14,39 +14,44 @@ public class UserDaoHibernate {
 
     Logger logger = Logger.getLogger(UserDaoHibernate.class);
 
-    public List<User> findAll(){
+    public List<User> findAll() {
         logger.debug("Find all users");
-        List<User> users = HibernateSessionFactoryUtil
-                .getSessionFactory().openSession()
+        List users = HibernateSessionFactoryUtil
+                .getSessionFactory()
+                .openSession()
                 .createQuery("FROM User").list();
         return users;
     }
 
-    public User findById(String id){
+    public User findById(String id) {
         logger.debug("Find user by id");
-        return HibernateSessionFactoryUtil.getSessionFactory().openSession().get(User.class, id);
+        return HibernateSessionFactoryUtil
+                .getSessionFactory()
+                .openSession()
+                .get(User.class, id);
     }
 
-    public boolean save(User user){
-        try {
+    public boolean save(User user) {
+        try (Session session = HibernateSessionFactoryUtil
+                .getSessionFactory()
+                .openSession()) {
             logger.debug("Save user");
-            Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
             Transaction tx1 = session.beginTransaction();
             session.save(user);
             tx1.commit();
-            session.close();
             return true;
-        }catch (HibernateException e){
+        } catch (HibernateException e) {
             logger.warn("Exception", e);
             return false;
         }
     }
 
-    public boolean update(User user, String id){
-        try {
+    public boolean update(User user, String id) {
+        String hql = "UPDATE User SET login = :login, email = :email, roleId = :roleId WHERE id = :id";
+        try (Session session = HibernateSessionFactoryUtil
+                .getSessionFactory()
+                .openSession()) {
             logger.debug("Update user");
-            String hql = "UPDATE User SET login = :login, email = :email, roleId = :roleId WHERE id = :id";
-            Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
             Transaction txl = session.beginTransaction();
             Query query = session.createQuery(hql);
             query.setParameter("login", user.getLogin());
@@ -55,24 +60,23 @@ public class UserDaoHibernate {
             query.setParameter("id", id);
             query.executeUpdate();
             txl.commit();
-            session.close();
             return true;
-        }catch (HibernateException e){
+        } catch (HibernateException e) {
             logger.warn("Exception", e);
             return false;
         }
     }
 
     public boolean delete(User user) {
-        try {
+        try (Session session = HibernateSessionFactoryUtil
+                .getSessionFactory()
+                .openSession()) {
             logger.debug("Delete user");
-            Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
             Transaction tx1 = session.beginTransaction();
             session.delete(user);
             tx1.commit();
-            session.close();
             return true;
-        }catch (HibernateException e){
+        } catch (HibernateException e) {
             logger.warn("Exception", e);
             return false;
         }
