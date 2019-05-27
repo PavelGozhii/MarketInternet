@@ -54,9 +54,9 @@ public class GenericDao<T> implements GenericDaoInterface<T> {
         try (Session session = HibernateSessionFactoryUtil
                 .getSessionFactory()
                 .openSession()) {
-            Transaction tx1 = session.beginTransaction();
+            Transaction transaction = session.beginTransaction();
             session.save(t);
-            tx1.commit();
+            transaction.commit();
             logger.debug("Save success");
             return true;
         } catch (HibernateException e) {
@@ -71,9 +71,9 @@ public class GenericDao<T> implements GenericDaoInterface<T> {
         try (Session session = HibernateSessionFactoryUtil
                 .getSessionFactory()
                 .openSession()) {
-            Transaction tx1 = session.beginTransaction();
+            Transaction transaction = session.beginTransaction();
             session.delete(t);
-            tx1.commit();
+            transaction.commit();
             return true;
         } catch (HibernateException e) {
             logger.warn(e);
@@ -87,9 +87,9 @@ public class GenericDao<T> implements GenericDaoInterface<T> {
         try (Session session = HibernateSessionFactoryUtil
                 .getSessionFactory()
                 .openSession()) {
-            Transaction tx1 = session.beginTransaction();
+            Transaction transaction = session.beginTransaction();
             session.update(t);
-            tx1.commit();
+            transaction.commit();
             return true;
         } catch (HibernateException e) {
             logger.warn(e);
@@ -103,14 +103,13 @@ public class GenericDao<T> implements GenericDaoInterface<T> {
         try (Session session = HibernateSessionFactoryUtil
                 .getSessionFactory()
                 .openSession()) {
-            Transaction tx1 = session.beginTransaction();
+            Transaction transaction = session.beginTransaction();
             session.update(id, t);
-            tx1.commit();
+            transaction.commit();
             return true;
         } catch (HibernateException e) {
             logger.warn(e);
             return false;
         }
     }
-
 }
