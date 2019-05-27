@@ -5,7 +5,6 @@ import dao.UserDaoHibernate;
 import model.Good;
 import model.Order;
 import org.apache.log4j.Logger;
-import service.CodeGenerator;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,16 +14,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(value = "/user/home", name = "UserHome")
-public class UserHomeServlet extends HttpServlet {
-    private UserDaoHibernate userDao;
+@WebServlet(name = "UserAddGoodToBasketServlet", value = "/user/add")
+public class UserAddGoodToBasketServlet extends HttpServlet {
     private GoodDaoHibernate goodDao;
-    private static final Logger logger = Logger.getLogger(UserHomeServlet.class);
+    private UserDaoHibernate userDao;
+    private static final Logger logger = Logger.getLogger(UserAddGoodToBasketServlet.class);
 
     @Override
     public void init() throws ServletException {
-        userDao = new UserDaoHibernate();
         goodDao = new GoodDaoHibernate();
+        userDao = new UserDaoHibernate();
         super.init();
     }
 
@@ -33,16 +32,16 @@ public class UserHomeServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getSession().getAttribute("order") == null) {
-            Order order = new Order();
-            order.setId(String.valueOf(CodeGenerator.generateCode()));
-            order.setIdUser((String) request.getSession().getAttribute("login"));
-            request.getSession().setAttribute("order", order);
-        }
+        logger.debug("Add to cart");
+        Order order = (Order) request.getSession().getAttribute("order");
+        String id = request.getParameter("id");
+        Good good = goodDao.findById(Good.class, id);
+        order.getGoods().add(good);
+        request.getSession().setAttribute("order", order);
         request.setAttribute("goodsList", goodDao.findAll(Good.class));
         request.setAttribute("login", request.getSession().getAttribute("login"));
         RequestDispatcher dispatcher = request.getRequestDispatcher("UserPage.jsp");
-        logger.info("Forward to UserPage.jsp");
+        logger.debug("Forward to UserPage.jsp");
         dispatcher.forward(request, response);
     }
 }

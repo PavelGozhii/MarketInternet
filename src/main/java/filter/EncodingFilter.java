@@ -12,9 +12,9 @@ import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
 
 @WebFilter(urlPatterns = "/*")
-public class EncordingFilter implements Filter {
+public class EncodingFilter implements Filter {
 
-    private static final Logger logger = Logger.getLogger(EncordingFilter.class);
+    private static final Logger logger = Logger.getLogger(EncodingFilter.class);
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }

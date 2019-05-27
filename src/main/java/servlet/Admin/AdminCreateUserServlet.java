@@ -1,6 +1,5 @@
 package servlet.Admin;
 
-import dao.UserDao;
 import dao.UserDaoHibernate;
 import model.User;
 import org.apache.log4j.Logger;
@@ -30,7 +29,7 @@ public class AdminCreateUserServlet extends HttpServlet {
         String password = request.getParameter("password");
         String email = request.getParameter("email");
         String roleId = request.getParameter("roleId");
-        User user = new User(login, CodeGenerator.getSHA512SecurePsssword(password), email, roleId);
+        User user = new User(login, CodeGenerator.getSHA512SecurePassword(password), email, roleId);
         logger.debug("Creating user" + login + " with role " + roleId);
         if (userDao.save(user)) {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/admin/home");

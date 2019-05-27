@@ -1,7 +1,9 @@
 package servlet.Admin;
 
+import dao.GenericDao;
 import dao.UserDao;
 import dao.UserDaoHibernate;
+import model.User;
 import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
@@ -14,7 +16,7 @@ import java.io.IOException;
 
 @WebServlet(value = "/admin/home", name = "AdminHome")
 public class AdminHomeServlet extends HttpServlet {
-    private UserDaoHibernate userDao;
+    private GenericDao<User> userDao;
     private static final Logger logger = Logger.getLogger(AdminHomeServlet.class);
 
     @Override
@@ -28,7 +30,7 @@ public class AdminHomeServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("userList", userDao.findAll());
+        request.setAttribute("userList", userDao.findAll(User.class));
         logger.info("Forwarding to AdminPage.jsp");
         RequestDispatcher dispatcher = request.getRequestDispatcher("AdminPage.jsp");
         dispatcher.forward(request, response);

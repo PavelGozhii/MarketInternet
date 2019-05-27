@@ -33,10 +33,10 @@ public class SellerCreateServlet extends HttpServlet {
         String id;
         do {
             id = CodeGenerator.generateId(name);
-        } while (goodDao.findById(id) != null);
+        } while (goodDao.findById(Good.class, id) != null);
         Good good = new Good(id, owner, name, description, price);
         logger.debug("Add new goods");
-        if (goodDao.saveGood(good)) {
+        if (goodDao.save(good)) {
             logger.info("Forward to /seller/home");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/seller/home");
             dispatcher.forward(request, response);

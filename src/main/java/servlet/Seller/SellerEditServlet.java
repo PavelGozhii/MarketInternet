@@ -47,7 +47,7 @@ public class SellerEditServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("good", goodDao.findById(request.getParameter("id")));
+        request.setAttribute("good", goodDao.findById(Good.class, request.getParameter("id")));
         logger.info("Forward to GoodForm.jsp");
         RequestDispatcher dispatcher = request.getRequestDispatcher("GoodForm.jsp");
         dispatcher.forward(request, response);

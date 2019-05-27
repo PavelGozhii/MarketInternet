@@ -1,8 +1,6 @@
 package servlet;
 
-import dao.GoodDao;
 import dao.GoodDaoHibernate;
-import dao.UserDao;
 import dao.UserDaoHibernate;
 import model.User;
 import org.apache.log4j.Logger;
@@ -33,11 +31,11 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
-        User user = userDao.findById(login);
+        User user = userDao.findById(User.class, login);
         if (user == null) {
             logger.warn("UserNotFound");
             showErrorPage(req, resp, "UserNotFound");
-        } else if (user.getHashPassword().equals(CodeGenerator.getSHA512SecurePsssword(password))) {
+        } else if (user.getHashPassword().equals(CodeGenerator.getSHA512SecurePassword(password))) {
             req.getSession().setAttribute("login", login);
             req.getSession().setAttribute("role", user.getRoleId());
             switch (user.getRoleId()) {

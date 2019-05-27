@@ -1,6 +1,5 @@
 package servlet;
 
-import dao.UserDao;
 import dao.UserDaoHibernate;
 import model.User;
 import org.apache.log4j.Logger;
@@ -26,7 +25,7 @@ public class RegistrationServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        User user = new User(request.getParameter("login"), CodeGenerator.getSHA512SecurePsssword(request.getParameter("password")),
+        User user = new User(request.getParameter("login"), CodeGenerator.getSHA512SecurePassword(request.getParameter("password")),
                 request.getParameter("email"), request.getParameter("roleId"));
         if (userDao.save(user)) {
             logger.debug("User is registered");

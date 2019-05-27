@@ -18,7 +18,7 @@ public class UserDaoTest extends Assert {
 
     @Before
     public void beforeUserDaoTest() {
-        User user = new User("testLogin", CodeGenerator.getSHA512SecurePsssword("12345"), "pavelgozhii@gmail.com", "user");
+        User user = new User("testLogin", CodeGenerator.getSHA512SecurePassword("12345"), "pavelgozhii@gmail.com", "user");
         userDao.insertUser(user);
     }
 
@@ -31,7 +31,7 @@ public class UserDaoTest extends Assert {
     public void insertUserDaoTest() {
         User newUser = userDao.selectUser("testLogin");
         assertEquals("testLogin", newUser.getLogin());
-        assertEquals(CodeGenerator.getSHA512SecurePsssword("12345"), newUser.getHashPassword());
+        assertEquals(CodeGenerator.getSHA512SecurePassword("12345"), newUser.getHashPassword());
         assertEquals(null, userDao.selectUser("newTestLogin"));
     }
 
@@ -55,11 +55,11 @@ public class UserDaoTest extends Assert {
 
     @Test
     public void updateUserDaoTest() {
-        User user = new User("updateTestLogin", CodeGenerator.getSHA512SecurePsssword("54321"), "pavelgozhii@gmail.com", "user");
+        User user = new User("updateTestLogin", CodeGenerator.getSHA512SecurePassword("54321"), "pavelgozhii@gmail.com", "user");
         assertEquals(true, userDao.updateUser(user, "testLogin"));
         User updateUser = userDao.selectUser("updateTestLogin");
         assertEquals(updateUser.getLogin(), "updateTestLogin");
-        assertEquals(updateUser.getHashPassword(), CodeGenerator.getSHA512SecurePsssword("54321"));
+        assertEquals(updateUser.getHashPassword(), CodeGenerator.getSHA512SecurePassword("54321"));
         userDao.deleteUser("updateTestLogin");
     }
 }

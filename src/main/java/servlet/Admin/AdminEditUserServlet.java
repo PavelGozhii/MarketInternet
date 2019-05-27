@@ -1,8 +1,6 @@
 package servlet.Admin;
 
-import dao.GoodDao;
 import dao.GoodDaoHibernate;
-import dao.UserDao;
 import dao.UserDaoHibernate;
 import model.User;
 import org.apache.log4j.Logger;
@@ -36,7 +34,7 @@ public class AdminEditUserServlet extends HttpServlet {
         String email = request.getParameter("email");
         String lastRoleId = request.getParameter("lastRoleId");
         String roleId = request.getParameter("roleId");
-        User user = new User(login, CodeGenerator.getSHA512SecurePsssword(password), email, roleId);
+        User user = new User(login, CodeGenerator.getSHA512SecurePassword(password), email, roleId);
         if (lastRoleId.equals("seller") && !roleId.equals("seller")) {
             logger.debug("Deleting goods by owner");
             goodDao.deleteByOwner(login);
@@ -49,7 +47,7 @@ public class AdminEditUserServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("user", userDao.findById(request.getParameter("login")));
+        request.setAttribute("user", userDao.findById(User.class, request.getParameter("login")));
         logger.info("Forward to UserForm.jsp");
         RequestDispatcher dispatcher = request.getRequestDispatcher("UserForm.jsp");
         dispatcher.forward(request, response);

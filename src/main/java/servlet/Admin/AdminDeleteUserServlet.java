@@ -4,6 +4,7 @@ import dao.GoodDao;
 import dao.GoodDaoHibernate;
 import dao.UserDao;
 import dao.UserDaoHibernate;
+import model.User;
 import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
@@ -33,13 +34,13 @@ public class AdminDeleteUserServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String login = request.getParameter("login");
-        String roleId = userDao.findById(login).getRoleId();
+        String roleId = userDao.findById(User.class, login).getRoleId();
         if (roleId.equals("seller")) {
             logger.debug("Deleting goods by owner");
             goodDao.deleteByOwner(login);
         }
         logger.debug("Deleting user");
-        userDao.delete(userDao.findById(login));
+        userDao.delete(userDao.findById(User.class, login));
         logger.info("Forward to /admin/home");
         RequestDispatcher dispatcher = request.getRequestDispatcher("/admin/home");
         dispatcher.forward(request, response);
