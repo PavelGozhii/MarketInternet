@@ -1,8 +1,10 @@
 package servlet.User;
 
-import dao.GoodDao;
-import dao.UserDao;
+import dao.GoodDaoHibernate;
+import dao.OrderDaoHibernate;
+import dao.UserDaoHibernate;
 import model.Good;
+import model.Order;
 import model.User;
 import org.apache.log4j.Logger;
 import service.CodeGenerator;
@@ -18,14 +20,16 @@ import java.io.IOException;
 
 @WebServlet(name = "UserBuyServlet", value = "/user/buy")
 public class UserBuyServlet extends HttpServlet {
-    private GoodDao goodDao;
-    private UserDao userDao;
+    private GoodDaoHibernate goodDao;
+    private UserDaoHibernate userDao;
+    private OrderDaoHibernate orderDao;
     private static final Logger logger = Logger.getLogger(UserBuyServlet.class);
 
     @Override
     public void init() throws ServletException {
-        userDao = new UserDao();
-        goodDao = new GoodDao();
+        userDao = new UserDaoHibernate();
+        goodDao = new GoodDaoHibernate();
+        orderDao = new OrderDaoHibernate();
         super.init();
     }
 
@@ -35,6 +39,9 @@ public class UserBuyServlet extends HttpServlet {
             logger.debug("Purchase success");
             request.getSession().removeAttribute("code");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/success.jsp");
+            Order order = (Order) request.getSession().getAttribute("order");
+            orderDao.save(order);
+            System.out.println(order.getId());
             request.setAttribute("message", "Purchase successful");
             request.setAttribute("ref", "/user/home");
             logger.info("Forward to /success.jsp");
@@ -52,14 +59,14 @@ public class UserBuyServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
-        User user = userDao.selectUser((String) request.getSession().getAttribute("login"));
+        User user = userDao.findById(User.class, (String) request.getSession().getAttribute("login"));
         String email = user.getEmail();
         int code = CodeGenerator.generateCode();
         String codeString = String.valueOf(code);
         request.getSession().setAttribute("code", codeString);
         EmailSender.sendMessage(email, "Your code: " + code);
-        Good good = goodDao.selectGood(id);
-        request.setAttribute("good", good);
+        Order order = (Order) request.getSession().getAttribute("order");
+        request.setAttribute("goods", order.getGoods().toArray());
         logger.info("Forward to BuyPage.jsp");
         RequestDispatcher dispatcher = request.getRequestDispatcher("BuyPage.jsp");
         dispatcher.forward(request, response);

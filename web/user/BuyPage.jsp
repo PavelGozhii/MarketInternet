@@ -15,9 +15,23 @@
 <div align="center">
     <h1>Your purchase, <c:out value="${login}"/></h1>
     <h2>To buy this good you need confirm it, we send code in your email</h2>
-    <h2>Good: <c:out value="${good.name}"/></h2><br/>
-    <h2>Description: <c:out value="${good.description}"/></h2><br/>
-    <h2>Price: <c:out value="${good.price}"/></h2>
+    <table border="1" cellpadding="5">
+        <caption><h2>List of Goods</h2></caption>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Owner</th>
+            <th>Price</th>
+        </tr>
+        <c:forEach var="good" items="${goods}">
+            <tr>
+                <td><c:out value="${good.name}"/></td>
+                <td><c:out value="${good.description}"/></td>
+                <td><c:out value="${good.owner}"/></td>
+                <td><c:out value="${good.price}"/></td>
+            </tr>
+        </c:forEach>
+    </table>
     <form action="buy" method="post">
         Code <input type="text" name="code"/>
         <input type="submit" value="Confirm"/>

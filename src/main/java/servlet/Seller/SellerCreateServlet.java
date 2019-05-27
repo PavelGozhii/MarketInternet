@@ -1,6 +1,7 @@
 package servlet.Seller;
 
 import dao.GoodDao;
+import dao.GoodDaoHibernate;
 import model.Good;
 import org.apache.log4j.Logger;
 import service.CodeGenerator;
@@ -15,12 +16,12 @@ import java.io.IOException;
 
 @WebServlet(name = "SellerCreate", value = "/seller/create")
 public class SellerCreateServlet extends HttpServlet {
-    private GoodDao goodDao;
+    private GoodDaoHibernate goodDao;
     private Logger logger = Logger.getLogger(SellerCreateServlet.class);
 
     @Override
     public void init() throws ServletException {
-        goodDao = new GoodDao();
+        goodDao = new GoodDaoHibernate();
         super.init();
     }
 
@@ -32,10 +33,10 @@ public class SellerCreateServlet extends HttpServlet {
         String id;
         do {
             id = CodeGenerator.generateId(name);
-        } while (goodDao.selectGood(id) != null);
+        } while (goodDao.findById(Good.class, id) != null);
         Good good = new Good(id, owner, name, description, price);
         logger.debug("Add new goods");
-        if (goodDao.insertGood(good)) {
+        if (goodDao.save(good)) {
             logger.info("Forward to /seller/home");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/seller/home");
             dispatcher.forward(request, response);

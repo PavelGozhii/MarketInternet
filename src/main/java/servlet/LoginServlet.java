@@ -1,7 +1,7 @@
 package servlet;
 
-import dao.GoodDao;
-import dao.UserDao;
+import dao.GoodDaoHibernate;
+import dao.UserDaoHibernate;
 import model.User;
 import org.apache.log4j.Logger;
 import service.CodeGenerator;
@@ -16,14 +16,14 @@ import java.io.IOException;
 
 @WebServlet(value = "/login", name = "Login")
 public class LoginServlet extends HttpServlet {
-    private UserDao userDao;
-    private GoodDao goodDao;
+    private UserDaoHibernate userDao;
+    private GoodDaoHibernate goodDao;
     private static final Logger logger = Logger.getLogger(LoginServlet.class);
 
     @Override
     public void init() throws ServletException {
-        userDao = new UserDao();
-        goodDao = new GoodDao();
+        userDao = new UserDaoHibernate();
+        goodDao = new GoodDaoHibernate();
         super.init();
     }
 
@@ -31,11 +31,11 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
-        User user = userDao.selectUser(login);
+        User user = userDao.findById(User.class, login);
         if (user == null) {
             logger.warn("UserNotFound");
             showErrorPage(req, resp, "UserNotFound");
-        } else if (user.getHashPassword().equals(CodeGenerator.getSHA512SecurePsssword(password))) {
+        } else if (user.getHashPassword().equals(CodeGenerator.getSHA512SecurePassword(password))) {
             req.getSession().setAttribute("login", login);
             req.getSession().setAttribute("role", user.getRoleId());
             switch (user.getRoleId()) {
@@ -56,7 +56,6 @@ public class LoginServlet extends HttpServlet {
                     showErrorPage(req, resp, "Unknown role");
             }
         } else {
-            logger.warn("Incorrect password");
             showErrorPage(req, resp, "Incorrect password");
         }
     }
@@ -73,6 +72,7 @@ public class LoginServlet extends HttpServlet {
         request.setAttribute("error", error);
         logger.info("Forward to error.jsp");
         dispatcher.forward(request, response);
+
     }
 
 }

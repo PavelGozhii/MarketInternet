@@ -1,11 +1,39 @@
 package model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+
+
+@Entity
+@Table(name = "goods")
 public class Good {
+
+    @Id
+    @Column(name = "id")
     private String id;
+
+    @Column(name = "owner")
     private String owner;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "price")
     private double price;
+
+    @Column(name = "description")
     private String description;
+
+    @ManyToMany(mappedBy = "goods")
+    private Set<Order> orders = new HashSet<>();
+
+    public Good(){}
 
     public Good(String id, String owner, String name, String description, double price) {
         this.id = id;
@@ -14,6 +42,7 @@ public class Good {
         this.price = price;
         this.description = description;
     }
+
 
     public String getOwner() {
         return owner;
@@ -35,6 +64,10 @@ public class Good {
         return description;
     }
 
+    public Set<Order> getOrders() {
+        return orders;
+    }
+
     public void setOwner(String owner) {
         this.owner = owner;
     }
@@ -53,5 +86,9 @@ public class Good {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setOrders(Set<Order> orders) {
+        this.orders = orders;
     }
 }

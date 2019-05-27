@@ -1,7 +1,7 @@
 package servlet.Admin;
 
-import dao.GoodDao;
-import dao.UserDao;
+import dao.GoodDaoHibernate;
+import dao.UserDaoHibernate;
 import model.User;
 import org.apache.log4j.Logger;
 import service.CodeGenerator;
@@ -16,14 +16,14 @@ import java.io.IOException;
 
 @WebServlet(value = "/admin/edit", name = "AdminEdit")
 public class AdminEditUserServlet extends HttpServlet {
-    private UserDao userDao;
-    private GoodDao goodDao;
+    private UserDaoHibernate userDao;
+    private GoodDaoHibernate goodDao;
     private static final Logger logger = Logger.getLogger(AdminEditUserServlet.class);
 
     @Override
     public void init() throws ServletException {
-        userDao = new UserDao();
-        goodDao = new GoodDao();
+        userDao = new UserDaoHibernate();
+        goodDao = new GoodDaoHibernate();
         super.init();
     }
 
@@ -34,20 +34,20 @@ public class AdminEditUserServlet extends HttpServlet {
         String email = request.getParameter("email");
         String lastRoleId = request.getParameter("lastRoleId");
         String roleId = request.getParameter("roleId");
-        User user = new User(login, CodeGenerator.getSHA512SecurePsssword(password), email, roleId);
+        User user = new User(login, CodeGenerator.getSHA512SecurePassword(password), email, roleId);
         if (lastRoleId.equals("seller") && !roleId.equals("seller")) {
             logger.debug("Deleting goods by owner");
-            goodDao.deleteGoodsByOwner(login);
+            goodDao.deleteByOwner(login);
         }
         logger.debug("Updating user");
-        userDao.updateUser(user, lastLogin);
+        userDao.update(user, lastLogin);
         logger.info("Forward to /admin/home");
         RequestDispatcher dispatcher = request.getRequestDispatcher("/admin/home");
         dispatcher.forward(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("user", userDao.selectUser(request.getParameter("login")));
+        request.setAttribute("user", userDao.findById(User.class, request.getParameter("login")));
         logger.info("Forward to UserForm.jsp");
         RequestDispatcher dispatcher = request.getRequestDispatcher("UserForm.jsp");
         dispatcher.forward(request, response);

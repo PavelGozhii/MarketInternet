@@ -21,10 +21,14 @@ public class CodeGenerator {
     public static String generateId(String str) {
         str = str.replace(" ", "");
         logger.info("Generating Id");
-        return str.substring(0, 4) + generateCode();
+        if (str.length() > 4) {
+            return str.substring(0, 4) + generateCode();
+        }else{
+            return str;
+        }
     }
 
-    public static String getSHA512SecurePsssword(String passwordToHash) {
+    public static String getSHA512SecurePassword(String passwordToHash) {
         String generatedPassword = null;
         String salt = "123";
         try {

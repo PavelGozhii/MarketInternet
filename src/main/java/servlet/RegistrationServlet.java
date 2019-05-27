@@ -1,6 +1,6 @@
 package servlet;
 
-import dao.UserDao;
+import dao.UserDaoHibernate;
 import model.User;
 import org.apache.log4j.Logger;
 import service.CodeGenerator;
@@ -15,19 +15,19 @@ import java.io.IOException;
 
 @WebServlet(name = "RegistrationServlet", value = "/registration")
 public class RegistrationServlet extends HttpServlet {
-    private UserDao userDao;
+    private UserDaoHibernate userDao;
     private static final Logger logger = Logger.getLogger(RegistrationServlet.class);
 
     @Override
     public void init() throws ServletException {
-        userDao = new UserDao();
+        userDao = new UserDaoHibernate();
         super.init();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        User user = new User(request.getParameter("login"), CodeGenerator.getSHA512SecurePsssword(request.getParameter("password")),
+        User user = new User(request.getParameter("login"), CodeGenerator.getSHA512SecurePassword(request.getParameter("password")),
                 request.getParameter("email"), request.getParameter("roleId"));
-        if (userDao.insertUser(user)) {
+        if (userDao.save(user)) {
             logger.debug("User is registered");
             request.setAttribute("login", user.getLogin());
             RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
