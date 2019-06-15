@@ -16,9 +16,9 @@ public class OrderDaoHibernate extends GenericDao<Order> {
         try (Session session = HibernateSessionFactoryUtil
                 .getSessionFactory()
                 .openSession()) {
-            Transaction tx1 = session.beginTransaction();
+            Transaction transaction = session.beginTransaction();
             session.saveOrUpdate(order);
-            tx1.commit();
+            transaction.commit();
             logger.debug("Save success");
             return true;
         } catch (HibernateException e) {
